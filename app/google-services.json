@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "908931288173",
+    "project_id": "security-app-4cf34",
+    "storage_bucket": "security-app-4cf34.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908931288173:android:ecf6be4707db442be20364",
+        "android_client_info": {
+          "package_name": "com.example.security_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKjZCUO_v0kNkArqMNkSs1t5RAD9fh9nw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908931288173:android:93d9882734271899e20364",
+        "android_client_info": {
+          "package_name": "com.sowmya.security"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKjZCUO_v0kNkArqMNkSs1t5RAD9fh9nw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
