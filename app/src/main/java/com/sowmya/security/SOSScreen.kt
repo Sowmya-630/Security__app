@@ -57,22 +57,7 @@ fun SOSScreen() {
     }
 }
 
-// Emergency Contacts Grid
-@Composable
-fun EmergencyOptions() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-            EmergencyItem("Police", "100", R.drawable.ic_police)
-            EmergencyItem("Helpline", "1091", R.drawable.ic_helpline)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-            EmergencyItem("FirstAid", "108", R.drawable.ic_nearby)
 
-
-        }
-    }
-}
 @Composable
 fun EmergencyHelplineScreen() {
     Column(

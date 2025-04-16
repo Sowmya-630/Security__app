@@ -93,10 +93,18 @@ dependencies {
     implementation(libs.androidx.ui.v153)
     implementation(libs.material3)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation ("com.google.accompanist:accompanist-permissions:0.37.2")
     implementation(libs.androidx.activity.compose.v1101)
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
+    implementation ("com.google.maps.android:maps-compose:6.5.2")
+    implementation("androidx.compose.ui:ui-graphics:1.8.0")
     //implementation(libs.library)
     implementation("com.github.pedroSG94.rtmp-rtsp-stream-client-java:common:2.5.9")
     implementation("com.github.pedroSG94.rtmp-rtsp-stream-client-java:library:2.5.9")
+    implementation ("com.google.firebase:firebase-database")
+    implementation("com.google.accompanist:accompanist-permissions:0.37.2")
+    implementation ("androidx.lifecycle:lifecycle-service:2.8.7")
+
 
 
 

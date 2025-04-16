@@ -3,56 +3,58 @@ package com.sowmya.security
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
-import android.view.SurfaceView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.pedro.library.rtmp.RtmpCamera1
-import com.pedro.common.ConnectChecker
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.pedro.library.rtmp.RtmpCamera2
 
-// --- RTMP Camera Helper Class ---
-class RtmpCameraHelper(private val context: Context, private val surfaceView: SurfaceView) {
+import com.pedro.common.ConnectChecker
+import com.pedro.encoder.input.video.CameraHelper
+
+import com.pedro.library.view.OpenGlView
+import com.sowmya.security.viewmodel.StreamViewModel
+
+class RtmpCameraHelper(
+    private val context: Context,
+    private val openGlView: OpenGlView,
+    private val cameraFacing: CameraHelper.Facing
+) {
     private val connectChecker = ConnectCheckerRtmpImpl(context)
-    private val rtmpCamera = RtmpCamera1(surfaceView, connectChecker)
+    private val rtmpCamera = RtmpCamera2(openGlView, connectChecker)
 
     fun startStream(rtmpUrl: String) {
         if (!rtmpCamera.isStreaming) {
             val audioReady = rtmpCamera.prepareAudio()
             val videoReady = rtmpCamera.prepareVideo()
 
-            Log.d("RTMP", "Audio Ready: $audioReady, Video Ready: $videoReady")
-
             if (audioReady && videoReady) {
                 rtmpCamera.startStream(rtmpUrl)
             } else {
-                Toast.makeText(context, "Failed to prepare camera or audio", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to prepare audio/video", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     fun stopStream() {
-        if (rtmpCamera.isStreaming) {
-            rtmpCamera.stopStream()
-        }
+        if (rtmpCamera.isStreaming) rtmpCamera.stopStream()
     }
 
     fun isStreaming(): Boolean = rtmpCamera.isStreaming
 
     fun startPreview() {
         if (!rtmpCamera.isOnPreview) {
-            rtmpCamera.startPreview()
+            rtmpCamera.startPreview(cameraFacing)
         }
     }
 
@@ -62,10 +64,9 @@ class RtmpCameraHelper(private val context: Context, private val surfaceView: Su
         }
     }
 
-    fun getCameraView(): SurfaceView = surfaceView
+    fun getCameraView(): OpenGlView = openGlView
 }
 
-// --- ConnectChecker Implementation ---
 class ConnectCheckerRtmpImpl(private val context: Context) : ConnectChecker {
     override fun onAuthError() {
         Toast.makeText(context, "Auth error", Toast.LENGTH_SHORT).show()
@@ -92,74 +93,75 @@ class ConnectCheckerRtmpImpl(private val context: Context) : ConnectChecker {
     }
 }
 
-// --- Main Composable for Multi-User RTMP Streaming ---
 @Composable
-fun MultiUserStreamScreen() {
+fun StreamScreen() {
     val context = LocalContext.current
-    val surfaceView = remember { SurfaceView(context) }
+    val auth = FirebaseAuth.getInstance()
+    val currentUserId = auth.currentUser?.uid ?: "test"
+    val rtmpUrl = "rtmp://16.170.228.168/live/$currentUserId"
+    val streamViewModel: StreamViewModel = viewModel()
+    val frontOpenGlView = remember { OpenGlView(context) }
+    val backOpenGlView = remember { OpenGlView(context) }
+    var frontCameraHelper by remember { mutableStateOf<RtmpCameraHelper?>(null) }
+    var backCameraHelper by remember { mutableStateOf<RtmpCameraHelper?>(null) }
 
-    // Sample users and their unique stream URLs
-    val userStreamMap = mapOf(
-        "sowmya" to "rtmp://16.170.228.168/live/sowmyaStream",
-        "rajesh" to "rtmp://16.170.228.168/live/rajeshStream"
-    )
+    val activity = context as? ComponentActivity
 
-    var selectedUser by remember { mutableStateOf("sowmya") }
-    val rtmpUrl = userStreamMap[selectedUser] ?: ""
-
-    var cameraHelper: RtmpCameraHelper? by remember { mutableStateOf(null) }
-
-    // Request camera and mic permissions
     LaunchedEffect(Unit) {
         requestPermissions(context)
-    }
+        activity?.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-    // Start preview when surface is ready
-    LaunchedEffect(surfaceView) {
-        cameraHelper = RtmpCameraHelper(context, surfaceView)
-        cameraHelper?.startPreview()
+        frontCameraHelper = RtmpCameraHelper(context, frontOpenGlView, CameraHelper.Facing.FRONT)
+        frontCameraHelper?.startPreview()
+        kotlinx.coroutines.delay(1000)
+        frontCameraHelper?.startStream(rtmpUrl + "_front")
+//
+//        backCameraHelper = RtmpCameraHelper(context, backOpenGlView, CameraHelper.Facing.BACK)
+//        backCameraHelper?.startPreview()
+//        kotlinx.coroutines.delay(1000)
+//        backCameraHelper?.startStream(rtmpUrl + "_back")
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        AndroidView(
-            factory = { surfaceView },
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            userStreamMap.keys.forEach { user ->
-                Button(onClick = {
-                    selectedUser = user
-                    Toast.makeText(context, "Switched to $user", Toast.LENGTH_SHORT).show()
-                }) {
-                    Text(user)
-                }
-            }
+        Row(modifier = Modifier.weight(1f)) {
+            AndroidView(
+                factory = { frontOpenGlView },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp)
+            )
+            AndroidView(
+                factory = { backOpenGlView },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp)
+            )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = {
-                cameraHelper?.startStream(rtmpUrl)
+                frontCameraHelper?.stopPreview()
+                backCameraHelper = RtmpCameraHelper(context, backOpenGlView, CameraHelper.Facing.BACK)
+                backCameraHelper?.startPreview()
+//        backCameraHelper?.startStream(rtmpUrl + "_back")
             }) {
-                Text("Start ${selectedUser}'s Stream")
+                Text("toggle")
+            }
+            Button(onClick = {
+                frontCameraHelper?.startStream(rtmpUrl + "_front")
+                backCameraHelper?.startStream(rtmpUrl + "_back")
+                streamViewModel.setFrontStreaming(true)
+            }) {
+                Text("Start Stream")
             }
 
             Button(onClick = {
-                cameraHelper?.stopStream()
+                frontCameraHelper?.stopStream()
+                backCameraHelper?.stopStream()
+                streamViewModel.setFrontStreaming(true)
             }) {
                 Text("Stop Stream")
             }
@@ -167,20 +169,19 @@ fun MultiUserStreamScreen() {
     }
 }
 
-// --- Permission Helper ---
 fun requestPermissions(context: Context) {
     if (context is ComponentActivity) {
-        val requiredPermissions = arrayOf(
+        val permissions = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
         )
 
-        val notGranted = requiredPermissions.filter {
+        val notGranted = permissions.filter {
             ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
         }
 
         if (notGranted.isNotEmpty()) {
-            ActivityCompat.requestPermissions(context, notGranted.toTypedArray(), 1001)
+            ActivityCompat.requestPermissions(context, notGranted.toTypedArray(), 1010)
         }
     }
 }
