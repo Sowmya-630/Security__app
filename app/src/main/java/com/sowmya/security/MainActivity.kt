@@ -2,10 +2,18 @@ package com.sowmya.security
 
 import android.Manifest
 import android.app.Activity
+<<<<<<< HEAD
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
+=======
+import android.app.Application
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.os.Looper
+import android.util.Log
+>>>>>>> f0358ee (security app)
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,7 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.sowmya.security.navigation.MainNavigation
+<<<<<<< HEAD
 import com.sowmya.security.viewmodel.StreamViewModel
+=======
+>>>>>>> f0358ee (security app)
 
 class MainActivity : FragmentActivity() {
 
@@ -38,13 +49,21 @@ class MainActivity : FragmentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var database: FirebaseDatabase
     private lateinit var locationRef: DatabaseReference
+<<<<<<< HEAD
     private lateinit var biometricLoopManager: BiometricLoopManager
+=======
+    private var biometricLoopManager: BiometricLoopManager? = null
+>>>>>>> f0358ee (security app)
     private val requiredPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.CALL_PHONE,
         Manifest.permission.SEND_SMS,
         Manifest.permission.CAMERA
     )
+<<<<<<< HEAD
+=======
+
+>>>>>>> f0358ee (security app)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -55,8 +74,13 @@ class MainActivity : FragmentActivity() {
                 setContent {
                     val navController = rememberNavController()
                     var permissionsGranted by remember { mutableStateOf(false) }
+<<<<<<< HEAD
                     val streamViewModel: StreamViewModel = viewModel()
 
+=======
+
+
+>>>>>>> f0358ee (security app)
                     RequestAllPermissions(
                         requiredPermissions = requiredPermissions,
                         onResult = { granted ->
@@ -67,8 +91,12 @@ class MainActivity : FragmentActivity() {
                                     "Please grant all permissions to use the app fully.",
                                     Toast.LENGTH_LONG
                                 ).show()
+<<<<<<< HEAD
                             }
                             else{
+=======
+                            } else {
+>>>>>>> f0358ee (security app)
                                 Toast.makeText(
                                     this,
                                     "All permissions granted.",
@@ -80,7 +108,10 @@ class MainActivity : FragmentActivity() {
 
                     MainNavigation(navController = navController)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f0358ee (security app)
                     database = FirebaseDatabase.getInstance()
                     fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
                     locationRef = database.getReference("locations")
@@ -89,7 +120,10 @@ class MainActivity : FragmentActivity() {
                     checkPermission(Manifest.permission.CALL_PHONE, CALL_PERMISSION_REQUEST_CODE)
 
 //                    StartBiometricLoopButton()
+<<<<<<< HEAD
                     isLive(streamViewModel)
+=======
+>>>>>>> f0358ee (security app)
                 }
             },
             onFailure = {
@@ -100,6 +134,20 @@ class MainActivity : FragmentActivity() {
         biometricHelper.authenticate()
     }
 
+<<<<<<< HEAD
+=======
+    override fun onResume() {
+        super.onResume()
+        AppVisibilityTracker.isInForeground = true
+        AppVisibilityTracker.currentActivity = this
+    }
+
+    override fun onPause() {
+        super.onPause()
+        AppVisibilityTracker.isInForeground = false
+    }
+
+>>>>>>> f0358ee (security app)
     private fun checkPermission(permission: String, requestCode: Int) {
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
@@ -156,6 +204,7 @@ class MainActivity : FragmentActivity() {
             Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
         }
     }
+<<<<<<< HEAD
     @Composable
     fun isLive(viewModel: StreamViewModel) {
         val isFrontLive by viewModel.isFrontStreaming
@@ -190,6 +239,65 @@ class MainActivity : FragmentActivity() {
         biometricLoopManager = BiometricLoopManager(this)
         biometricLoopManager.startLoop()
     }
+=======
+
+//    @Composable
+//    fun StartBiometricLoopButton() {
+//        var isLoopStarted by remember { mutableStateOf(false) }
+//        var sec=biometricLoopManager?.elapsedSeconds
+//
+//        Button(onClick = {
+//            if (!isLoopStarted) {
+//                isLoopStarted = true
+//
+//                startLoop()
+//            } else {
+//                isLoopStarted = false
+//                biometricLoopManager?.stopLoop()
+//                Log.d("BiometricLoop", "Loop Stopped")
+//            }
+//        }){
+//            Text(text = if (isLoopStarted) "Stop loop  $sec" else "Start Loop ")
+//        }
+//        Spacer(modifier = Modifier.height(16.dp))
+////        Text(text = "Time Elapsed: $sec")
+//    }
+//
+//    private fun startLoop() {
+////        val activity = getCurrentActivity()
+//        val activity = AppVisibilityTracker.currentActivity as? FragmentActivity
+//
+//        if (activity == null) {
+//            Log.e("BiometricLoop", "Failed to get current activity!")
+//            return
+//        }
+//
+//        if (biometricLoopManager == null) {
+//            Log.d("BiometricLoop", "Loop Initialized")
+//        } else {
+//            Log.d("BiometricLoop", "Loop Already Initialized")
+//        }
+//
+//        biometricLoopManager = BiometricLoopManager(
+//            activity,
+//            onTrigger =  {
+//                Log.d("BiometricLoop", "Biometric trigger executed")
+////                Toast.makeText(activity, "Biometric trigger executed", Toast.LENGTH_SHORT).show()
+//            }
+////                Log.d("BiometricLoop", "Biometric trigger executed")
+//
+//                    // Start SOS, or navigate, or show alert, etc.
+//        /// Provide onTrigger logic here
+//        )
+//        biometricLoopManager?.startLoop()
+//        Log.d("BiometricLoop", "Loop Started")
+//        Toast.makeText(activity, "Loop Started", Toast.LENGTH_SHORT).show()
+//    }
+//
+//    private fun getCurrentActivity(): FragmentActivity? {
+//        return AppVisibilityTracker.currentActivity as? FragmentActivity
+//    }
+>>>>>>> f0358ee (security app)
 
     @Composable
     fun RequestAllPermissions(
@@ -218,4 +326,13 @@ class MainActivity : FragmentActivity() {
     }
 }
 
+<<<<<<< HEAD
+=======
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        registerActivityLifecycleCallbacks(AppVisibilityTracker)
+    }
+}
+>>>>>>> f0358ee (security app)
 

@@ -1,22 +1,27 @@
 package com.sowmya.security.ui
 
 import android.app.Activity
+<<<<<<< HEAD
 import android.content.Intent
 import android.location.Location
 import android.Manifest
 import android.content.Context
 import android.net.Uri
+=======
+import android.Manifest
+import android.content.Context
+>>>>>>> f0358ee (security app)
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.animation.core.*
+<<<<<<< HEAD
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -29,21 +34,21 @@ import androidx.compose.ui.unit.sp
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+=======
+import androidx.compose.foundation.shape.CircleShape
+>>>>>>> f0358ee (security app)
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
-import androidx.compose.material.icons.filled.Close
-import android.provider.ContactsContract
-import android.telephony.SmsManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.gms.location.LocationServices
-import com.sowmya.security.data.ContactEntity
-import com.sowmya.security.viewmodel.ContactViewModel
 import android.content.pm.PackageManager
+<<<<<<< HEAD
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,6 +59,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.ui.draw.alpha
+=======
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.runtime.livedata.observeAsState
+>>>>>>> f0358ee (security app)
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
@@ -62,25 +75,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+<<<<<<< HEAD
 import androidx.compose.ui.tooling.preview.Preview
+=======
+>>>>>>> f0358ee (security app)
 import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+<<<<<<< HEAD
 import androidx.navigation.compose.rememberNavController
+=======
+import com.google.firebase.auth.FirebaseAuth
+import com.pedro.encoder.input.video.CameraHelper
+import com.pedro.library.view.OpenGlView
+import com.sowmya.security.AppVisibilityTracker
+>>>>>>> f0358ee (security app)
 import com.sowmya.security.BiometricLoopManager
 import com.sowmya.security.R
 import com.sowmya.security.hasCallPermission
 import com.sowmya.security.makeEmergencyCall
 import com.sowmya.security.navigation.Screen
 import com.sowmya.security.ui.theam.GlowingCurvedLines
+<<<<<<< HEAD
 import com.sowmya.security.ui.theam.MoonGlowBackground
 import com.sowmya.security.ui.theam.MovingGlowingLinesBackground
 import com.sowmya.security.ui.theam.NeonTheme
 import com.sowmya.security.ui.theam.darkGlowColor
 import com.sowmya.security.viewmodel.LocationViewModel
 import com.sowmya.security.viewmodel.ProfileViewModel
+=======
+import com.sowmya.security.viewmodel.CameraViewModel
+import com.sowmya.security.viewmodel.ContactViewModel
+import com.sowmya.security.viewmodel.LocationViewModel
+import com.sowmya.security.viewmodel.ProfileViewModel
+import com.sowmya.security.viewmodel.SecurityViewModel
+
+>>>>>>> f0358ee (security app)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -90,10 +122,22 @@ fun HomeScreen(
     var viewModel :ProfileViewModel = viewModel()
     val userProfile = viewModel.userProfile
 //    MovingGlowingLinesBackground()
+<<<<<<< HEAD
 
     var showMenu by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val activity = context as? FragmentActivity
+=======
+    var biometricLoopManager: BiometricLoopManager? = null
+    val activity = AppVisibilityTracker.currentActivity as? FragmentActivity
+    val securityViewModel: SecurityViewModel = viewModel()
+    val contactViewModel : ContactViewModel = viewModel()
+    val cameraViewModel: CameraViewModel = viewModel()
+    var showMenu by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val elapsedTime by securityViewModel.elapsedTimeLiveData.observeAsState(initial = 0)
+//    val activity = context as? FragmentActivity
+>>>>>>> f0358ee (security app)
     val userLocation by remember { mutableStateOf(locationViewModel.userLocation) }
     LocationCheckHandler()
 //    val swirlSpeed = animateFloatAsState(targetValue = 1f, animationSpec = androidx.compose.animation.core.tween(4000))
@@ -131,7 +175,15 @@ fun HomeScreen(
                                         "Hi ${userProfile?.name}",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 16.sp
+<<<<<<< HEAD
                                     )
+=======
+
+                                    )
+                                    if(cameraViewModel.isStreaming()){
+                                        Text("🔴 Streaming", color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
+                                    }
+>>>>>>> f0358ee (security app)
 //                            Text("Complete profile", color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
                                 }
                                 Column(horizontalAlignment = Alignment.End) {
@@ -149,6 +201,11 @@ fun HomeScreen(
                                             fontSize = 12.sp
                                         )
                                     }
+<<<<<<< HEAD
+=======
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(text = "Elapsed Time: $elapsedTime seconds")
+>>>>>>> f0358ee (security app)
                                 }
                             }
                         },
@@ -241,6 +298,7 @@ fun HomeScreen(
                             label = "",
                             route = Screen.Sos.route,
                             onClick = {
+<<<<<<< HEAD
                                 // Handle SOS action here, like sending messages
                                 navController.navigate(Screen.Contacts.route)
                             }
@@ -249,6 +307,49 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(28.dp))
 
                     Spacer(modifier = Modifier.height(16.dp))
+=======
+                                securityViewModel.startLoop(
+                                    activity!!,
+                                    onTrigger = {
+
+                                        contactViewModel.sendSosMessage(context)
+//                                        val glView = OpenGlView(context)
+//                                        val isFrontStreaming by cameraViewModel.isFrontStreaming
+//                                        val isBackStreaming by cameraViewModel.isBackStreaming
+//                                        cameraViewModel.initialize(
+//                                            context,
+//                                            glView,
+//                                            if (isFrontStreaming) CameraHelper.Facing.FRONT else CameraHelper.Facing.BACK
+//                                        )
+//
+//                                        val userId =
+//                                            FirebaseAuth.getInstance().currentUser?.uid ?: "test"
+//                                        val rtmpUrl = "rtmp://16.170.228.168/live/$userId"
+//                                        cameraViewModel.startStream(rtmpUrl)
+                                            navController.navigate(Screen.Streamd.route)
+                                        securityViewModel.stopLoop()
+
+
+                                    })
+                                // Handle SOS action here, like sending messages
+//                                navController.navigate(Screen.Contacts.route)
+
+                            }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = {
+                        securityViewModel.stopLoop()
+                    }) { Text("Stop loop")}
+
+                    Spacer(modifier = Modifier.height(28.dp))
+                    Button(onClick = {
+//                        navController.navigate(Screen.Streamd.route)
+                        navController.navigate(Screen.Contacts.route)
+                    }) { Text("Sos View")}
+                    Spacer(modifier = Modifier.height(16.dp))
+
+>>>>>>> f0358ee (security app)
 
 // Emergency Buttons Section
                     val emergencyContacts = listOf(
@@ -271,7 +372,61 @@ fun HomeScreen(
                 }
             }
         }
+<<<<<<< HEAD
 
+=======
+}
+
+
+//
+//@Composable
+//fun StartBiometricLoopButton(biometricLoopManager: BiometricLoopManager?) {
+//    var isLoopStarted by remember { mutableStateOf(false) }
+//    var sec=biometricLoopManager?.elapsedSeconds
+//
+//    Button(onClick = {
+//        if (!isLoopStarted) {
+//            isLoopStarted = true
+//
+//            startLoop(biometricLoopManager)
+//        } else {
+//            isLoopStarted = false
+//            biometricLoopManager?.stopLoop()
+//            Log.d("BiometricLoop", "Loop Stopped")
+//        }
+//    }){
+//        Text(text = if (isLoopStarted) "Stop loop  $sec" else "Start Loop ")
+//    }
+//    Spacer(modifier = Modifier.height(16.dp))
+////        Text(text = "Time Elapsed: $sec")
+//}
+
+private fun startLoop(biometricLoopManager: BiometricLoopManager?) {
+//        val activity = getCurrentActivity()
+    val activity = AppVisibilityTracker.currentActivity as? FragmentActivity
+
+    if (activity == null) {
+        Log.e("BiometricLoop", "Failed to get current activity!")
+        return
+    }
+
+    if (biometricLoopManager == null) {
+        Log.d("BiometricLoop", "Loop Initialized")
+    } else {
+        Log.d("BiometricLoop", "Loop Already Initialized")
+    }
+
+//    biometricLoopManager = BiometricLoopManager(
+//        activity,
+//        onTrigger =  {
+//            Log.d("BiometricLoop", "Biometric trigger executed")
+////                Toast.makeText(activity, "Biometric trigger executed", Toast.LENGTH_SHORT).show()
+//        }
+//    )
+    biometricLoopManager?.startLoop()
+    Log.d("BiometricLoop", "Loop Started")
+    Toast.makeText(activity, "Loop Started", Toast.LENGTH_SHORT).show()
+>>>>>>> f0358ee (security app)
 }
 
 
@@ -429,6 +584,7 @@ fun NeumorphicEmergencyButton(
     }
 }
 
+<<<<<<< HEAD
 fun requestCallPermission(context: Context) {
     if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
         != PackageManager.PERMISSION_GRANTED
@@ -445,6 +601,9 @@ fun requestCallPermission(context: Context) {
         Toast.makeText(context, "Permission granted! Please press the button to call.", Toast.LENGTH_SHORT).show()
     }
 }
+=======
+
+>>>>>>> f0358ee (security app)
 
 
 @Composable

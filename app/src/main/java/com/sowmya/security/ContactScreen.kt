@@ -41,6 +41,7 @@ import com.sowmya.security.navigation.Screen
 import com.sowmya.security.ui.startLocationUpdates
 import com.sowmya.security.viewmodel.ContactViewModel
 import com.sowmya.security.viewmodel.LocationViewModel
+<<<<<<< HEAD
 import com.sowmya.security.viewmodel.StreamViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -52,6 +53,19 @@ fun normalizeNumber(number: String): String {
     return number.replace(Regex("[^+0-9]"), "")
 }
 
+=======
+
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.ArrayList
+
+private val SMS_PERMISSION_REQUEST_CODE = 1001
+
+fun normalizeNumber(number: String): String {
+    return number.replace(Regex("[^+0-9]"), "")
+}
+
+>>>>>>> f0358ee (security app)
 private fun requestSmsPermission(context: Context) {
     ActivityCompat.requestPermissions(
         context as Activity,
@@ -73,6 +87,7 @@ fun ContactScreen(
     val contacts by viewModel.contacts.collectAsState()
     val currentLocation = locationViewModel.userLocation
     var locationCallback: LocationCallback? = null
+<<<<<<< HEAD
     val streamViewModel: StreamViewModel = viewModel()
 
     @Suppress("DEPRECATION")
@@ -84,6 +99,20 @@ fun ContactScreen(
         SmsManager.getDefault()
     }
 
+=======
+
+
+    @Suppress("DEPRECATION")
+    val smsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val subscriptionManager =
+            context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+        val subscriptionId = SubscriptionManager.getDefaultSmsSubscriptionId()
+        SmsManager.getSmsManagerForSubscriptionId(subscriptionId)
+    } else {
+        SmsManager.getDefault()
+    }
+
+>>>>>>> f0358ee (security app)
     val isDefaultSmsApp = Telephony.Sms.getDefaultSmsPackage(context) == context.packageName
 
     if (!isDefaultSmsApp) {
@@ -119,11 +148,40 @@ fun ContactScreen(
         val sentReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (resultCode) {
+<<<<<<< HEAD
                     Activity.RESULT_OK -> Toast.makeText(context, "✅ SMS Sent", Toast.LENGTH_SHORT).show()
                     SmsManager.RESULT_ERROR_GENERIC_FAILURE -> Toast.makeText(context, "❌ Generic failure", Toast.LENGTH_SHORT).show()
                     SmsManager.RESULT_ERROR_NO_SERVICE -> Toast.makeText(context, "❌ No service", Toast.LENGTH_SHORT).show()
                     SmsManager.RESULT_ERROR_NULL_PDU -> Toast.makeText(context, "❌ Null PDU", Toast.LENGTH_SHORT).show()
                     SmsManager.RESULT_ERROR_RADIO_OFF -> Toast.makeText(context, "❌ Radio off", Toast.LENGTH_SHORT).show()
+=======
+                    Activity.RESULT_OK -> Toast.makeText(context, "✅ SMS Sent", Toast.LENGTH_SHORT)
+                        .show()
+
+                    SmsManager.RESULT_ERROR_GENERIC_FAILURE -> Toast.makeText(
+                        context,
+                        "❌ Generic failure",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    SmsManager.RESULT_ERROR_NO_SERVICE -> Toast.makeText(
+                        context,
+                        "❌ No service",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    SmsManager.RESULT_ERROR_NULL_PDU -> Toast.makeText(
+                        context,
+                        "❌ Null PDU",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    SmsManager.RESULT_ERROR_RADIO_OFF -> Toast.makeText(
+                        context,
+                        "❌ Radio off",
+                        Toast.LENGTH_SHORT
+                    ).show()
+>>>>>>> f0358ee (security app)
                 }
             }
         }
@@ -131,8 +189,22 @@ fun ContactScreen(
         val deliveredReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (resultCode) {
+<<<<<<< HEAD
                     Activity.RESULT_OK -> Toast.makeText(context, "📬 SMS Delivered", Toast.LENGTH_SHORT).show()
                     Activity.RESULT_CANCELED -> Toast.makeText(context, "❌ SMS Not Delivered", Toast.LENGTH_SHORT).show()
+=======
+                    Activity.RESULT_OK -> Toast.makeText(
+                        context,
+                        "📬 SMS Delivered",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    Activity.RESULT_CANCELED -> Toast.makeText(
+                        context,
+                        "❌ SMS Not Delivered",
+                        Toast.LENGTH_SHORT
+                    ).show()
+>>>>>>> f0358ee (security app)
                 }
             }
         }
@@ -194,22 +266,42 @@ fun ContactScreen(
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
+<<<<<<< HEAD
         if (isStreaming) {
             Text("🔴 LIVE", color = Color.Red, modifier = Modifier.padding(top = 8.dp))
         }
+=======
+//        if (isStreaming) {
+//            Text("🔴 LIVE", color = Color.Red, modifier = Modifier.padding(top = 8.dp))
+//        }
+>>>>>>> f0358ee (security app)
 
         Button(onClick = {
             cameraHelper?.startStream(streamUrl)
             isStreaming = true
+<<<<<<< HEAD
             streamViewModel.setFrontStreaming(true)
+=======
+>>>>>>> f0358ee (security app)
         }) {
             Text("Live Streaming")
         }
 
 
         Button(onClick = {
+<<<<<<< HEAD
             val sentIntent = PendingIntent.getBroadcast(context, 0, Intent(SENT), PendingIntent.FLAG_IMMUTABLE)
             val deliveredIntent = PendingIntent.getBroadcast(context, 0, Intent(DELIVERED), PendingIntent.FLAG_IMMUTABLE)
+=======
+            val sentIntent =
+                PendingIntent.getBroadcast(context, 0, Intent(SENT), PendingIntent.FLAG_IMMUTABLE)
+            val deliveredIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                Intent(DELIVERED),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+>>>>>>> f0358ee (security app)
 
 
             coroutineScope.launch {
@@ -220,6 +312,7 @@ fun ContactScreen(
 
 // Create lists of PendingIntent with the same size as parts
                         val sentIntents = List(parts.size) {
+<<<<<<< HEAD
                             PendingIntent.getBroadcast(context, 0, Intent(SENT), PendingIntent.FLAG_IMMUTABLE)
                         }
                         val deliveredIntents = List(parts.size) {
@@ -228,6 +321,30 @@ fun ContactScreen(
 // Send multipart SMS
                         smsManager.sendMultipartTextMessage(contact.phone, null, parts,
                             sentIntents as ArrayList<PendingIntent?>?, deliveredIntents as ArrayList<PendingIntent?>?
+=======
+                            PendingIntent.getBroadcast(
+                                context,
+                                0,
+                                Intent(SENT),
+                                PendingIntent.FLAG_IMMUTABLE
+                            )
+                        }
+                        val deliveredIntents = List(parts.size) {
+                            PendingIntent.getBroadcast(
+                                context,
+                                0,
+                                Intent(DELIVERED),
+                                PendingIntent.FLAG_IMMUTABLE
+                            )
+                        }
+// Send multipart SMS
+                        smsManager.sendMultipartTextMessage(
+                            contact.phone,
+                            null,
+                            parts,
+                            sentIntents as ArrayList<PendingIntent?>?,
+                            deliveredIntents as ArrayList<PendingIntent?>?
+>>>>>>> f0358ee (security app)
                         )
 
 //                        Toast.makeText(context, "Sending to ${contact.phone}", Toast.LENGTH_SHORT).show()
@@ -238,7 +355,15 @@ fun ContactScreen(
 
                     } catch (e: Exception) {
                         error = e
+<<<<<<< HEAD
                         Toast.makeText(context, "Failed to send to ${contact.phone}", Toast.LENGTH_SHORT).show()
+=======
+                        Toast.makeText(
+                            context,
+                            "Failed to send to ${contact.phone}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+>>>>>>> f0358ee (security app)
                     }
                 }
             }
@@ -249,7 +374,10 @@ fun ContactScreen(
         Button(onClick = {
             cameraHelper?.stopStream()
             isStreaming = false
+<<<<<<< HEAD
             streamViewModel.setFrontStreaming(false)
+=======
+>>>>>>> f0358ee (security app)
         }) {
             Text("Stop Stream")
         }
@@ -258,7 +386,17 @@ fun ContactScreen(
         Button(onClick = {
             navController.navigate(Screen.Stream.route)
         }) {
+<<<<<<< HEAD
             Text("Preview")
+=======
+            Text("Double Preview")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            navController.navigate(Screen.Streamd.route)
+        }) {
+            Text("Single  Preview")
+>>>>>>> f0358ee (security app)
         }
 
 //        if (error != null) {
@@ -272,3 +410,45 @@ fun ContactScreen(
 //        }
     }
 }
+<<<<<<< HEAD
+=======
+
+fun sendSosToContacts(
+    context: Context,
+    contacts: List<ContactEntity>,
+    smsManager: SmsManager,
+    streamUrl: String,
+    locationUrl: String
+) {
+    val SENT = "SMS_SENT"
+    val DELIVERED = "SMS_DELIVERED"
+
+    val baseMessage = "🚨 SOS Alert! I need help!"
+    val fullMessage = "$baseMessage\nLive Stream: $streamUrl\nLive Location: $locationUrl"
+
+    val parts = smsManager.divideMessage(fullMessage)
+
+    val sentIntents = List(parts.size) {
+        PendingIntent.getBroadcast(context, 0, Intent(SENT), PendingIntent.FLAG_IMMUTABLE)
+    }
+    val deliveredIntents = List(parts.size) {
+        PendingIntent.getBroadcast(context, 0, Intent(DELIVERED), PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    for (contact in contacts) {
+        try {
+            smsManager.sendMultipartTextMessage(
+                contact.phone,
+                null,
+                parts,
+                sentIntents as ArrayList<PendingIntent>,
+                deliveredIntents as ArrayList<PendingIntent>
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "Failed to send SMS to ${contact.phone}", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+>>>>>>> f0358ee (security app)
