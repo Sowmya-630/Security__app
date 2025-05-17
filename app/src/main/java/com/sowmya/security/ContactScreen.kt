@@ -276,8 +276,8 @@ fun ContactScreen(
                             contact.phone,
                             null,
                             parts,
-                            sentIntents as ArrayList<PendingIntent?>?,
-                            deliveredIntents as ArrayList<PendingIntent?>?
+                            sentIntents as ArrayList<PendingIntent>,
+                            deliveredIntents as ArrayList<PendingIntent>
                         )
 
 //                        Toast.makeText(context, "Sending to ${contact.phone}", Toast.LENGTH_SHORT).show()

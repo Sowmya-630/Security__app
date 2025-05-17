@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -42,6 +43,7 @@ import com.pedro.library.rtmp.RtmpCamera2
 import com.pedro.common.ConnectChecker
 import com.pedro.library.rtmp.RtmpCamera1
 import com.sowmya.security.viewmodel.CameraViewModel
+import kotlinx.coroutines.delay
 
 class CameraStreamHelper(
     private val context: Context,
@@ -124,7 +126,7 @@ fun StreamScreen0() {
     val  cameraViewModel: CameraViewModel = viewModel()
 
 
-    var isFrontCamera  =true
+    var isFrontCamera  by remember { mutableStateOf(false) }
     val openGlView = remember { OpenGlView(context) }
 
     var cameraHelper by remember { mutableStateOf<RtmpCameraHelper?>(null) }
@@ -136,22 +138,32 @@ fun StreamScreen0() {
 
 
     val lifecycleOwner = LocalLifecycleOwner.current
-
+    LaunchedEffect(Unit) {
+        requestPermissions(context)
+        activity?.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
     LaunchedEffect(isFrontCamera) {
         requestPermissions(context)
-        cameraHelper?.stopStream()
         cameraHelper?.stopPreview()
+        delay(1000)
+        cameraHelper?.stopStream()
+       delay(1000)
+
         activity?.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 
-//        cameraHelper?.release()
+        cameraHelper?.release()
         cameraHelper = RtmpCameraHelper(
             context,
             openGlView,
-            if (isFrontCamera) CameraHelper.Facing.FRONT else CameraHelper.Facing.BACK
+            if (isFrontCamera) CameraHelper.Facing.FRONT else
+                CameraHelper.Facing.BACK
+
         )
         cameraHelper?.startPreview()
-        cameraHelper?.startStream(rtmpUrl)
+        delay(1000)
+
+            cameraHelper?.startStream(rtmpUrl)
 
     }
 
@@ -159,6 +171,7 @@ fun StreamScreen0() {
     var lastTapTime by remember { mutableStateOf(0L) }
 
     Column(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.weight(1f)) {
         AndroidView(
             factory = { openGlView },
             modifier = Modifier
@@ -168,11 +181,12 @@ fun StreamScreen0() {
                     detectTapGestures(
                         onTap = {
                             val now = System.currentTimeMillis()
-                            if (now - lastTapTime < 400) {
+                            if (now - lastTapTime < 1000) {
                                 isFrontCamera = !isFrontCamera
                                 if (isFrontCamera) {
                                     cameraViewModel.setBackStreaming(true)
                                 } else {
+
                                     cameraViewModel.setFrontStreaming(true)
                                 }
                             }
@@ -181,6 +195,30 @@ fun StreamScreen0() {
                     )
                 }
         )
+        AndroidView(
+            factory = { openGlView },
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            val now = System.currentTimeMillis()
+                            if (now - lastTapTime < 1000) {
+                                isFrontCamera = !isFrontCamera
+                                if (isFrontCamera) {
+                                    cameraViewModel.setBackStreaming(true)
+                                } else {
+
+                                    cameraViewModel.setFrontStreaming(true)
+                                }
+                            }
+                            lastTapTime = now
+                        }
+                    )
+                }
+        )
+    }
 
         Row(
             modifier = Modifier
@@ -191,7 +229,7 @@ fun StreamScreen0() {
 
 
             Button(onClick = {
-                cameraHelper?.startPreview()
+                    cameraHelper?.startPreview()
                     cameraHelper?.startStream(rtmpUrl)
                     isStreaming = true
 
@@ -203,7 +241,7 @@ fun StreamScreen0() {
                 cameraHelper?.stopStream()
                 cameraHelper = null
             }) {
-                Text("Stop Camera")
+                Text("Stop Stream")
             }
         }
     }

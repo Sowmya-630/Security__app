@@ -75,6 +75,7 @@ fun HomeScreen(
     val contactViewModel : ContactViewModel = viewModel()
     val cameraViewModel: CameraViewModel = viewModel()
     var showMenu by remember { mutableStateOf(false) }
+    var loopstop by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val elapsedTime by securityViewModel.elapsedTimeLiveData.observeAsState(initial = 0)
 //    val activity = context as? FragmentActivity
@@ -234,6 +235,7 @@ fun HomeScreen(
                                 securityViewModel.startLoop(
                                     activity!!,
                                     onTrigger = {
+                                        loopstop=true
 
                                         contactViewModel.sendSosMessage(context)
 //                                        val glView = OpenGlView(context)
@@ -250,7 +252,7 @@ fun HomeScreen(
 //                                        val rtmpUrl = "rtmp://16.170.228.168/live/$userId"
 //                                        cameraViewModel.startStream(rtmpUrl)
                                             navController.navigate(Screen.Streamd.route)
-                                        securityViewModel.stopLoop()
+//                                        securityViewModel.stopLoop()
 
 
                                     })
@@ -260,6 +262,7 @@ fun HomeScreen(
                             }
                         )
                     }
+                    if(loopstop) securityViewModel.stopLoop()
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = {
                         securityViewModel.stopLoop()

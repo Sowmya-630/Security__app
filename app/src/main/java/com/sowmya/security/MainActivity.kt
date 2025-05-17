@@ -55,8 +55,6 @@ class MainActivity : FragmentActivity() {
                 setContent {
                     val navController = rememberNavController()
                     var permissionsGranted by remember { mutableStateOf(false) }
-
-
                     RequestAllPermissions(
                         requiredPermissions = requiredPermissions,
                         onResult = { granted ->
@@ -234,12 +232,10 @@ class MainActivity : FragmentActivity() {
             val allGranted = permissions.entries.all { it.value }
             onResult(allGranted)
         }
-
         LaunchedEffect(Unit) {
             val allPermissionsGranted = requiredPermissions.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
-
             if (!allPermissionsGranted) {
                 launcher.launch(requiredPermissions)
             } else {
