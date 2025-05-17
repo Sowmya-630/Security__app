@@ -64,6 +64,8 @@ class SecurityViewModel : ViewModel() {
 //                        ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 //                    val ringtone: Ringtone = RingtoneManager.getRingtone(applicationContext, alarmUri)
 //                    ringtone.play()
+                    biometricLoopManager?.stopLoop()
+                    isLoopStarted = false
                     onTrigger()
                 }
             )

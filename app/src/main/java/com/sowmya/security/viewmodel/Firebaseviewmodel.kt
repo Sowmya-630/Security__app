@@ -195,7 +195,7 @@ class StreamViewModel : ViewModel() {
     fun sendSosMessage(context: Context) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val live = "http://16.170.228.168/stream.html?stream=$"
+                val live = "http://16.170.228.168/stream.html?stream=$currentUserId"
                 val livelocation = "http://16.170.228.168/live-location.html?id=$currentUserId"
                 val streamUrl = "rtmp://16.170.228.168/live/$currentUserId"
                 val message = "🚨 SOS Alert! I need help!"
@@ -219,7 +219,7 @@ class StreamViewModel : ViewModel() {
                             contact.phone,
                             null,
                             parts,
-                            sentIntents as java.util.ArrayList<PendingIntent>,
+                            sentIntents as ArrayList<PendingIntent>,
                             deliveredIntents as ArrayList<PendingIntent>
                         )
                     } catch (e: Exception) {
