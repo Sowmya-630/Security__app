@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.pedro.library.rtmp.RtmpCamera2
 
@@ -23,7 +22,6 @@ import com.pedro.common.ConnectChecker
 import com.pedro.encoder.input.video.CameraHelper
 
 import com.pedro.library.view.OpenGlView
-import com.sowmya.security.viewmodel.StreamViewModel
 
 class RtmpCameraHelper(
     private val context: Context,
@@ -65,6 +63,11 @@ class RtmpCameraHelper(
     }
 
     fun getCameraView(): OpenGlView = openGlView
+    fun release() {
+        stopStream()
+        stopPreview()
+//        rtmpCamera2.clearFilters()
+    }
 }
 
 class ConnectCheckerRtmpImpl(private val context: Context) : ConnectChecker {
@@ -99,9 +102,10 @@ fun StreamScreen() {
     val auth = FirebaseAuth.getInstance()
     val currentUserId = auth.currentUser?.uid ?: "test"
     val rtmpUrl = "rtmp://16.170.228.168/live/$currentUserId"
-    val streamViewModel: StreamViewModel = viewModel()
+
     val frontOpenGlView = remember { OpenGlView(context) }
     val backOpenGlView = remember { OpenGlView(context) }
+    var isFrontCameraActive by remember { mutableStateOf(true) }
     var frontCameraHelper by remember { mutableStateOf<RtmpCameraHelper?>(null) }
     var backCameraHelper by remember { mutableStateOf<RtmpCameraHelper?>(null) }
 
@@ -114,7 +118,7 @@ fun StreamScreen() {
         frontCameraHelper = RtmpCameraHelper(context, frontOpenGlView, CameraHelper.Facing.FRONT)
         frontCameraHelper?.startPreview()
         kotlinx.coroutines.delay(1000)
-        frontCameraHelper?.startStream(rtmpUrl + "_front")
+        frontCameraHelper?.startStream(rtmpUrl)
 //
 //        backCameraHelper = RtmpCameraHelper(context, backOpenGlView, CameraHelper.Facing.BACK)
 //        backCameraHelper?.startPreview()
@@ -143,17 +147,30 @@ fun StreamScreen() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = {
-                frontCameraHelper?.stopPreview()
-                backCameraHelper = RtmpCameraHelper(context, backOpenGlView, CameraHelper.Facing.BACK)
-                backCameraHelper?.startPreview()
-//        backCameraHelper?.startStream(rtmpUrl + "_back")
+                 if (isFrontCameraActive) {
+                     frontCameraHelper?.stopPreview()
+                     backCameraHelper?.startPreview()
+                     backCameraHelper?.startStream(rtmpUrl)
+                } else {
+                     backCameraHelper?.stopPreview()
+                     frontCameraHelper?.startPreview()
+                     frontCameraHelper?.startStream(rtmpUrl)
+                }
+                isFrontCameraActive = !isFrontCameraActive
             }) {
                 Text("toggle")
             }
+//            Button(onClick = {
+//                frontCameraHelper?.stopPreview()
+//                backCameraHelper = RtmpCameraHelper(context, backOpenGlView, CameraHelper.Facing.BACK)
+//                backCameraHelper?.startPreview()
+////        backCameraHelper?.startStream(rtmpUrl + "_back")
+//            }) {
+//                Text("start back camera")
+//            }
             Button(onClick = {
-                frontCameraHelper?.startStream(rtmpUrl + "_front")
-                backCameraHelper?.startStream(rtmpUrl + "_back")
-                streamViewModel.setFrontStreaming(true)
+                frontCameraHelper?.startStream(rtmpUrl)
+                backCameraHelper?.startStream(rtmpUrl )
             }) {
                 Text("Start Stream")
             }
@@ -161,7 +178,6 @@ fun StreamScreen() {
             Button(onClick = {
                 frontCameraHelper?.stopStream()
                 backCameraHelper?.stopStream()
-                streamViewModel.setFrontStreaming(true)
             }) {
                 Text("Stop Stream")
             }

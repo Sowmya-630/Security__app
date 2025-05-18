@@ -69,6 +69,9 @@ fun MainNavigation(navController: NavHostController) {
         composable(Screen.Stream.route) {
             StreamScreen()
         }
+        composable(Screen.Streamd.route) {
+            StreamScreen0()
+        }
         composable(Screen.ProfileScreen.route){
             ProfileScreen(navController = navController)
         }
@@ -84,6 +87,7 @@ sealed class Screen(val route: String) {
     object Camera : Screen("camera")
     object Sos : Screen("sos")
     object Stream : Screen("stream")
+    object Streamd: Screen("stream_d")
     object ProfileScreen : Screen("profile")
 }
 
