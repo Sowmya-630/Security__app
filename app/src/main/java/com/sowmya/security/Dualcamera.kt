@@ -195,29 +195,7 @@ fun StreamScreen0() {
                     )
                 }
         )
-        AndroidView(
-            factory = { openGlView },
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = {
-                            val now = System.currentTimeMillis()
-                            if (now - lastTapTime < 1000) {
-                                isFrontCamera = !isFrontCamera
-                                if (isFrontCamera) {
-                                    cameraViewModel.setBackStreaming(true)
-                                } else {
 
-                                    cameraViewModel.setFrontStreaming(true)
-                                }
-                            }
-                            lastTapTime = now
-                        }
-                    )
-                }
-        )
     }
 
         Row(

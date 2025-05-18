@@ -54,6 +54,9 @@ class MainActivity : FragmentActivity() {
             onSuccess = {
                 setContent {
                     val navController = rememberNavController()
+                    MainNavigation(navController = navController)
+
+
                     var permissionsGranted by remember { mutableStateOf(false) }
                     RequestAllPermissions(
                         requiredPermissions = requiredPermissions,
@@ -74,9 +77,6 @@ class MainActivity : FragmentActivity() {
                             }
                         }
                     )
-
-                    MainNavigation(navController = navController)
-
                     database = FirebaseDatabase.getInstance()
                     fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
                     locationRef = database.getReference("locations")
